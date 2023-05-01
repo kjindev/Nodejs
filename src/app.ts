@@ -17,9 +17,6 @@ const year = date.getFullYear();
 const month = date.getMonth();
 const day = date.getDate();
 
-const today = new Date(year, month, day).toLocaleDateString();
-const yesterday = new Date(year, month, day - 1).toLocaleDateString();
-
 let list: { time: string; name: string } = { time: "0000", name: "" };
 
 app.get("/", (req: Request, res: Response) => {
@@ -27,12 +24,23 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/today", async (req, res) => {
+  let inputhYear = String(year);
+  let inputMonth = "";
+  let inputDay = "";
+  if (String(month + 1).length === 1) {
+    inputMonth = `0${month + 1}`;
+  } else {
+    inputMonth = String(month + 1);
+  }
+  if (String(day).length === 1) {
+    inputDay = `0${day}`;
+  } else {
+    inputMonth = String(day);
+  }
   const getAPI = async (req: Request) => {
+    console.log("Today", inputhYear + inputMonth + inputDay);
     const API_URL = `http://openAPI.seoul.go.kr:8088/${API_KEY}/json/TimeAverageAirQuality/1/25/${
-      today.slice(0, 4) +
-      today.slice(5, 7).replace(" ", "0") +
-      today.slice(9, 11).replace(" ", "0") +
-      list.time
+      inputhYear + inputMonth + inputDay + list.time
     }/${list.name}`;
     let response;
     try {
@@ -56,12 +64,28 @@ app.post("/today", async (req, res) => {
 });
 
 app.get("/yesterday", async (req, res) => {
+  const today = new Date(year, month, day).toLocaleDateString();
+  const yesterday = new Date(year, month, day - 1).toLocaleDateString();
+  let inputhYear = yesterday.slice(0, 4);
+  let inputMonth = "";
+  let inputDay = yesterday.slice(-3, -1).replace(" ", "0");
+  if (today.slice(5, 7) !== yesterday.slice(5, 7)) {
+    if (yesterday[7] === "1") {
+      inputMonth = yesterday.slice(5, 8).replace(" ", "0");
+    } else {
+      inputMonth = yesterday.slice(5, 7).replace(" ", "0");
+    }
+  } else {
+    if (String(month + 1).length === 1) {
+      inputMonth = `0${month}`;
+    } else {
+      inputMonth = String(month + 1);
+    }
+  }
   const getAPI = async (req: Request) => {
+    console.log("yesterday", inputhYear + inputMonth + inputDay);
     const API_URL = `http://openAPI.seoul.go.kr:8088/${API_KEY}/json/TimeAverageAirQuality/1/25/${
-      yesterday.slice(0, 4) +
-      yesterday.slice(5, 7).replace(" ", "0") +
-      yesterday.slice(9, 11).replace(" ", "0") +
-      list.time
+      inputhYear + inputMonth + inputDay + list.time
     }/${list.name}`;
     let response;
     try {
