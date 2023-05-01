@@ -8,7 +8,12 @@ const port = 4000;
 require("dotenv").config();
 const { API_KEY } = process.env;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -19,12 +24,12 @@ const day = date.getDate();
 
 let list: { time: string; name: string } = { time: "0000", name: "" };
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
   res.json("hello world");
 });
 
 app.get("/today", async (req, res) => {
-  let inputhYear = String(year);
+  let inputYear = String(year);
   let inputMonth = "";
   let inputDay = "";
   if (String(month + 1).length === 1) {
@@ -38,9 +43,9 @@ app.get("/today", async (req, res) => {
     inputMonth = String(day);
   }
   const getAPI = async (req: Request) => {
-    console.log("Today", inputhYear + inputMonth + inputDay);
+    console.log("Today", inputYear + inputMonth + inputDay);
     const API_URL = `http://openAPI.seoul.go.kr:8088/${API_KEY}/json/TimeAverageAirQuality/1/25/${
-      inputhYear + inputMonth + inputDay + list.time
+      inputYear + inputMonth + inputDay + list.time
     }/${list.name}`;
     let response;
     try {
@@ -66,7 +71,7 @@ app.post("/today", async (req, res) => {
 app.get("/yesterday", async (req, res) => {
   const today = new Date(year, month, day).toLocaleDateString();
   const yesterday = new Date(year, month, day - 1).toLocaleDateString();
-  let inputhYear = yesterday.slice(0, 4);
+  let inputYear = yesterday.slice(0, 4);
   let inputMonth = "";
   let inputDay = yesterday.slice(-3, -1).replace(" ", "0");
   if (today.slice(5, 7) !== yesterday.slice(5, 7)) {
@@ -83,9 +88,9 @@ app.get("/yesterday", async (req, res) => {
     }
   }
   const getAPI = async (req: Request) => {
-    console.log("yesterday", inputhYear + inputMonth + inputDay);
+    console.log("yesterday", inputYear + inputMonth + inputDay);
     const API_URL = `http://openAPI.seoul.go.kr:8088/${API_KEY}/json/TimeAverageAirQuality/1/25/${
-      inputhYear + inputMonth + inputDay + list.time
+      inputYear + inputMonth + inputDay + list.time
     }/${list.name}`;
     let response;
     try {
