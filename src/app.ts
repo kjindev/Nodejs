@@ -8,12 +8,7 @@ const port = 4000;
 require("dotenv").config();
 const { API_KEY } = process.env;
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+app.use(cors(["http://localhost:3000", "https://seoul-air.vercel.app/"]));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
