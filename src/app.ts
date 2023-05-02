@@ -8,7 +8,7 @@ const port = 4000;
 require("dotenv").config();
 const { API_KEY } = process.env;
 
-app.use(cors(["http://localhost:3000", "https://seoul-air.vercel.app/"]));
+app.use(cors(["http://localhost:3000", "https://seoul-air.vercel.app"]));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -23,9 +23,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/data", async (req, res) => {
-  console.log(list);
   const getAPI = async (req: Request) => {
-    const API_URL = `http://openAPI.seoul.go.kr:8088/${API_KEY}/json/TimeAverageAirQuality/1/25/${list.date}/${list.name}`;
+    const API_URL = `http://openAPI.seoul.go.kr:8088/${API_KEY}/json/TimeAverageAirQuality/1/25/${
+      list.date + list.time
+    }/${list.name}`;
     let response;
     try {
       response = await axios.get(API_URL);
