@@ -1,52 +1,22 @@
-import express, { Request, Response } from "express";
+import express from "express";
 
-const axios = require("axios");
-const cors = require("cors");
 const app = express();
 const port = 4000;
+const cors = require("cors");
 
-require("dotenv").config();
-const { API_KEY } = process.env;
+const dataRouter = require("./routes/data");
+const locationRouter = require("./routes/location");
 
 app.use(cors(["http://localhost:3000", "https://seoul-air.vercel.app"]));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-let list: { date: string; time: string; name: string } = {
-  date: "",
-  time: "",
-  name: "",
-};
+app.use("/data", dataRouter);
+app.use("/location", locationRouter);
 
 app.get("/", (req, res) => {
-  res.json("hello world");
-});
-
-app.get("/data", async (req, res) => {
-  const getAPI = async (req: Request) => {
-    const API_URL = `http://openAPI.seoul.go.kr:8088/${API_KEY}/json/TimeAverageAirQuality/1/25/${
-      list.date + list.time
-    }/${list.name}`;
-    let response;
-    try {
-      response = await axios.get(API_URL);
-    } catch (error) {
-      console.log(error);
-    }
-    return response;
-  };
-  await getAPI(req).then((response) => {
-    res.json(response.data);
-  });
-});
-
-app.post("/data", async (req, res) => {
-  list = {
-    date: req.body.date,
-    time: req.body.time,
-    name: req.body.name,
-  };
-  res.send(list);
+  res.send("Seoul-Air-Project의 API를 제공하는 메인 페이지 입니다.");
 });
 
 app.listen(port, () => console.log("running"));
